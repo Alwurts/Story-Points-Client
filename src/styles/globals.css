@@ -1,3 +1,13 @@
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
+
+.text-outline {
+  -webkit-text-stroke: 5px black;
+  font-weight: 900;
+}
+
+.text-outline-sm {
+  -webkit-text-stroke: 3px black;
+  font-weight: 900;
+}

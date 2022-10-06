@@ -1,14 +1,18 @@
-import Link from "next/link";
 import Layout from "../components/Layout";
-import SolidBoxShadowButton from "../components/SolidBoxShadowButton";
+import ColorButtonLink from "../components/buttons/ColorButtonLink";
+import PageTitleBiOutline from "../components/text/PageTitleBiOutline";
+import ColorButton from "../components/buttons/ColorButton";
 
 const IndexPage = () => (
-  <Layout title="Home | Next.js + TypeScript Example">
-    <div className="flex h-screen flex-col items-center justify-center space-y-2">
-      <h1 className="fill-white text-9xl font-black outline-1 outline-offset-4 outline-black">
-        Home
-      </h1>
-      <SolidBoxShadowButton>Start</SolidBoxShadowButton>
+  <Layout title="StoryMator">
+    <div className="fixed inset-0 flex h-screen flex-col items-center justify-center overflow-y-scroll">
+      <PageTitleBiOutline className="flex-col text-8xl">
+        Story@@Mator
+      </PageTitleBiOutline>
+      {/* <ColorButton className="mt-14 bg-purple-600">Join Room</ColorButton> */}
+      <ColorButtonLink href="/create" className="mt-14 bg-cyan-300">
+        Create Room
+      </ColorButtonLink>
     </div>
   </Layout>
 );
