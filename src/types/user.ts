@@ -4,11 +4,12 @@
 //
 // import { User } from 'path/to/interfaces';
 
-export type User = {
-  id: number;
-  name: string;
-};
-
-export interface IconType {
-  className: string;
+export interface UserDisplay {
+  users: User[];
 }
+
+export type User = {
+  id: string;
+  userName: string;
+  color: string;
+};
