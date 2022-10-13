@@ -1,5 +1,5 @@
-import { IconType } from "../../types";
-import {FC} from "react"
+import { IconType } from "../../types/general";
+import { FC } from "react";
 
 const MenuIcon: FC<IconType> = ({ className }) => {
   return (
@@ -20,4 +20,4 @@ const MenuIcon: FC<IconType> = ({ className }) => {
   );
 };
 
-export default MenuIcon
+export default MenuIcon;

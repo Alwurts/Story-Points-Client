@@ -1,4 +1,4 @@
-import { IconType } from "../../types";
+import { IconType } from "../../types/general";
 import { FC } from "react";
 
 const CursorArrowRaysIcon: FC<IconType> = ({ className }) => {

@@ -4,12 +4,14 @@ interface TitleProps {
   children: string;
   outlineFirst?: boolean;
   className?: string;
+  outlineClassName?: string;
 }
 
 const PageTitleBiOutline: React.FC<TitleProps> = ({
   children,
   className,
   outlineFirst,
+  outlineClassName,
 }) => {
   const [firstPart, secondPart] = children.split("@@");
   return (
@@ -29,7 +31,11 @@ const PageTitleBiOutline: React.FC<TitleProps> = ({
       </span>
       <span
         className={classNames(
-          !outlineFirst ? "text-outline text-white" : "font-black text-black",
+          !outlineFirst
+            ? outlineClassName
+              ? outlineClassName
+              : "text-outline text-white"
+            : "font-black text-black",
           "whitespace-pre-wrap uppercase"
         )}
       >
