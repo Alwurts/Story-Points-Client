@@ -1,19 +1,14 @@
 import Layout from "../../../components/Layout";
-import ColorButtonLink from "../../../components/buttons/ColorButtonLink";
 import PageTitleBiOutline from "../../../components/text/PageTitleBiOutline";
-import ColorButton from "../../../components/buttons/ColorButton";
-import UserIcon from "../../../components/display/UserIcon";
-import UsersLogged from "../../../components/display/UsersLogged";
-import HorizontalSeparator from "../../../components/general/HorizontalSeparator";
-import { Dialog } from "@headlessui/react";
-import { useRef, useState } from "react";
-import { CogIcon, ShareIcon, XIcon } from "../../../components/icons";
-import useAutosizeTextArea from "../../../components/hooks/useAutoSizeTextArea";
-import ConnectionLink from "../../../components/general/ConnectionLink";
+import { useState } from "react";
 import ConnectionDialog from "../../../components/dialogs/ConnectionDialog";
 import SettingsDialog from "../../../components/dialogs/SettingsDialog";
 import VerticalSeparator from "../../../components/general/VerticalSeparator";
 import CornerActions from "../../../components/buttons/CornerActions";
+import UsersLoggedSmall from "../../../components/display/UsersLoggedSmall";
+import { uuidv4 } from "../../../utils/crypto";
+import { getRandomTailwindColor } from "../../../utils/colorGenerator";
+import { sampleUserData } from "../../../utils/sample-data";
 
 const RoomPage = () => {
   const isCreator = true;
@@ -35,13 +30,16 @@ const RoomPage = () => {
         shareAction={() => setShowConnectionDialog(true)}
         settingsAction={() => setShowSettingsDialog(true)}
       />
-      <div className="fixed inset-0 flex h-screen flex-col items-center justify-start overflow-y-scroll py-20">
-        <PageTitleBiOutline className="md:8xl mb-10 flex-col text-7xl">
-          Room@@JIRA 101/HBGS
-        </PageTitleBiOutline>
-
-        <VerticalSeparator className="my-14" />
-        <UsersLogged />
+      <div className="fixed inset-0 flex h-screen flex-col items-stretch justify-start">
+        <div className="flex items-center justify-evenly pt-10">
+          <PageTitleBiOutline
+            className="flex-col text-5xl"
+            outlineClassName="text-outline-sm text-white"
+          >
+            Room@@JIRA 101/HBGS
+          </PageTitleBiOutline>
+          <UsersLoggedSmall users={sampleUserData} />
+        </div>
       </div>
     </Layout>
   );

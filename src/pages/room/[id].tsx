@@ -1,18 +1,13 @@
 import Layout from "../../components/Layout";
-import ColorButtonLink from "../../components/buttons/ColorButtonLink";
 import PageTitleBiOutline from "../../components/text/PageTitleBiOutline";
 import ColorButton from "../../components/buttons/ColorButton";
-import UserIcon from "../../components/display/UserIcon";
 import UsersLogged from "../../components/display/UsersLogged";
 import HorizontalSeparator from "../../components/general/HorizontalSeparator";
-import { Dialog } from "@headlessui/react";
-import { useRef, useState } from "react";
-import { CogIcon, ShareIcon, XIcon } from "../../components/icons";
-import useAutosizeTextArea from "../../components/hooks/useAutoSizeTextArea";
-import ConnectionLink from "../../components/general/ConnectionLink";
+import { useState } from "react";
 import ConnectionDialog from "../../components/dialogs/ConnectionDialog";
 import SettingsDialog from "../../components/dialogs/SettingsDialog";
 import CornerActions from "../../components/buttons/CornerActions";
+import { sampleUserData } from "../../utils/sample-data";
 
 const RoomPage = () => {
   const isCreator = true;
@@ -47,7 +42,7 @@ const RoomPage = () => {
           </p>
         )}
         <HorizontalSeparator className="my-14" />
-        <UsersLogged />
+        <UsersLogged users={sampleUserData} />
       </div>
     </Layout>
   );
