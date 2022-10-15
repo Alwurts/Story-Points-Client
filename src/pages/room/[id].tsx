@@ -41,7 +41,7 @@ const RoomPage = () => {
             Waiting to start...
           </p>
         )}
-        <HorizontalSeparator className="my-14" />
+        <HorizontalSeparator className="my-14 px-3 sm:w-9/12 sm:px-10 md:w-6/12 lg:w-5/12" />
         <UsersLogged users={sampleUserData} />
       </div>
     </Layout>

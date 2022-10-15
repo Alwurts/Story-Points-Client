@@ -6,6 +6,7 @@
 
 export interface UserDisplay {
   users: User[];
+  className?: string;
 }
 
 export type User = {

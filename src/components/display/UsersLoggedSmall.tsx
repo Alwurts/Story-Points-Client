@@ -1,14 +1,20 @@
 import { FC } from "react";
 import { User, UserDisplay } from "../../types/user";
+import classNames from "../../utils/className";
 import { sampleUserData } from "../../utils/sample-data";
 import ColorButton from "../buttons/ColorButton";
 import UserIcon from "./UserIcon";
 import UserIconSmall from "./UserIconSmall";
 
-const UsersLoggedSmall: FC<UserDisplay> = ({ users }) => {
+const UsersLoggedSmall: FC<UserDisplay> = ({ users, className }) => {
   return (
-    <div className="flex flex-col items-start justify-start space-y-2">
-      <label className="text-outline-sm ml-3 text-center text-3xl uppercase text-white">
+    <div
+      className={classNames(
+        className,
+        "flex flex-col items-start justify-start space-y-2"
+      )}
+    >
+      <label className="ml-3 hidden text-center text-3xl font-black uppercase sm:block">
         Users Joined:
       </label>
       <div className="flex items-center">
