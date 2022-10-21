@@ -3,17 +3,42 @@ import PageTitleBiOutline from "../../components/text/PageTitleBiOutline";
 import ColorButton from "../../components/buttons/ColorButton";
 import UsersLogged from "../../components/display/UsersLogged";
 import HorizontalSeparator from "../../components/general/HorizontalSeparator";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import ConnectionDialog from "../../components/dialogs/ConnectionDialog";
 import SettingsDialog from "../../components/dialogs/SettingsDialog";
 import CornerActions from "../../components/buttons/CornerActions";
 import { sampleUserData } from "../../utils/sample-data";
+import { useRouter } from "next/router";
+import socket from "../../utils/socket";
 
 const RoomPage = () => {
   const isCreator = true;
   const [showConnectionDialog, setShowConnectionDialog] =
     useState<boolean>(false);
   const [showSettingsDialog, setShowSettingsDialog] = useState<boolean>(false);
+
+  const router = useRouter();
+  const { roomId } = router.query;
+
+  useEffect(() => {
+    if (roomId) {
+      const userSaved = JSON.parse(localStorage.getItem("roomUser"));
+      socket.emit("room:join", {
+        roomId: roomId,
+        userId: userSaved.id, //get from local storage
+      });
+    }
+  }, [router.query]);
+
+  useEffect(() => {
+    socket.on("room:joined", (room) => {
+      console.log(room);
+    });
+
+    return () => {
+      socket.off("room:joined");
+    };
+  }, []);
 
   return (
     <Layout title="StoryMator">

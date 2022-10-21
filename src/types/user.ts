@@ -12,5 +12,5 @@ export interface UserDisplay {
 export type User = {
   id: string;
   userName: string;
-  color: string;
+  color?: string;
 };

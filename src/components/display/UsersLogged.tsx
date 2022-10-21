@@ -9,8 +9,13 @@ const UsersLogged: React.FC<UserDisplay> = ({ users }) => {
         Users Joined:
       </label>
       <div className="grid grid-cols-2 gap-x-10 gap-y-7 sm:gap-x-20 md:gap-x-24">
-        {users.map((user) => (
-          <UserIcon userName={user.userName} color={user.color} id={user.id} />
+        {users.map((user, index) => (
+          <UserIcon
+            key={`${index}-${user.id}`}
+            userName={user.userName}
+            color={user.color}
+            id={user.id}
+          />
         ))}
       </div>
     </div>
