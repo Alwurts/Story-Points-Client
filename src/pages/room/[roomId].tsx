@@ -1,18 +1,18 @@
 import Layout from "../../components/Layout";
-import PageTitleBiOutline from "../../components/text/PageTitleBiOutline";
-import ColorButton from "../../components/buttons/ColorButton";
-import UsersLogged from "../../components/display/UsersLogged";
-import HorizontalSeparator from "../../components/general/HorizontalSeparator";
 import { useEffect, useState } from "react";
 import ConnectionDialog from "../../components/dialogs/ConnectionDialog";
 import SettingsDialog from "../../components/dialogs/SettingsDialog";
 import CornerActions from "../../components/buttons/CornerActions";
-import { sampleUserData } from "../../utils/sample-data";
 import { useRouter } from "next/router";
 import socket from "../../utils/socket";
+import WaitingRoom from "../../components/views/WaitingRoom";
+import { User } from "../../types/user";
+import { Room } from "../../types/room";
+import VotingRoom from "../../components/views/VotingRoom";
 
 const RoomPage = () => {
-  const isCreator = true;
+  const [loggedUser, setLoggedUser] = useState<User>(null);
+  const [room, setRoom] = useState<Room>(null);
   const [showConnectionDialog, setShowConnectionDialog] =
     useState<boolean>(false);
   const [showSettingsDialog, setShowSettingsDialog] = useState<boolean>(false);
@@ -22,7 +22,14 @@ const RoomPage = () => {
 
   useEffect(() => {
     if (roomId) {
-      const userSaved = JSON.parse(localStorage.getItem("roomUser"));
+      const userSaved: User = JSON.parse(localStorage.getItem("roomUser"));
+      console.log("userSaved");
+      console.log(userSaved);
+      if (!userSaved) {
+        router.push("/");
+        return;
+      }
+      setLoggedUser(userSaved);
       socket.emit("room:join", {
         roomId: roomId,
         userId: userSaved.id, //get from local storage
@@ -31,14 +38,22 @@ const RoomPage = () => {
   }, [router.query]);
 
   useEffect(() => {
-    socket.on("room:joined", (room) => {
+    socket.connect();
+
+    socket.on("room:update", (room: Room) => {
+      console.log("room:update");
       console.log(room);
+      setRoom(room);
     });
 
     return () => {
-      socket.off("room:joined");
+      socket.off("room:update");
     };
   }, []);
+
+  if (!loggedUser || !room) {
+    return null;
+  }
 
   return (
     <Layout title="StoryMator">
@@ -54,21 +69,12 @@ const RoomPage = () => {
         shareAction={() => setShowConnectionDialog(true)}
         settingsAction={() => setShowSettingsDialog(true)}
       />
-      <div className="fixed inset-0 flex h-screen flex-col items-center justify-start overflow-y-scroll pt-20 pb-28">
-        <PageTitleBiOutline className="md:8xl mb-10 flex-col text-7xl">
-          Room@@JIRA 101/HBGS
-        </PageTitleBiOutline>
-        {isCreator && (
-          <ColorButton className=" bg-green-500">Start</ColorButton>
-        )}
-        {!isCreator && (
-          <p className="text-center text-5xl font-black uppercase text-green-500">
-            Waiting to start...
-          </p>
-        )}
-        <HorizontalSeparator className="my-14 px-3 sm:w-9/12 sm:px-10 md:w-6/12 lg:w-5/12" />
-        <UsersLogged users={sampleUserData} />
-      </div>
+      {room.state === "waiting" && (
+        <WaitingRoom room={room} user={loggedUser} socket={socket} />
+      )}
+      {room.state === "voting" && (
+        <VotingRoom socket={socket} room={room} user={loggedUser} />
+      )}
     </Layout>
   );
 };

@@ -5,12 +5,14 @@ import ArrowPath from "../icons/ArrowPath";
 
 interface ColorButton extends ButtonHTMLAttributes<HTMLButtonElement> {
   actionIsLoading?: boolean;
+  onClick?: () => void;
 }
 
 const ColorButton: React.FC<ColorButton> = (props) => {
   return (
     <button
       disabled={props.disabled ?? props.actionIsLoading}
+      onClick={props.onClick}
       className={classNames(
         props.disabled || props.actionIsLoading
           ? "bg-slate-500"

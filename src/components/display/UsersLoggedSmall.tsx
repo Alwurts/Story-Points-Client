@@ -20,6 +20,7 @@ const UsersLoggedSmall: FC<UserDisplay> = ({ users, className }) => {
       <div className="flex items-center">
         {users.slice(0, 4).map((user, index) => (
           <UserIconSmall
+            key={`${index}-${user.id}`}
             userName={user.userName}
             color={user.color}
             id={user.id}

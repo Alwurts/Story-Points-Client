@@ -6,6 +6,8 @@ import { useEffect, useState } from "react";
 import { useForm } from "react-hook-form";
 import socket from "../utils/socket";
 import { useRouter } from "next/router";
+import axios from "axios";
+import { User } from "../types/user";
 
 interface CreateRoomForm {
   roomTopic: string;
@@ -13,35 +15,15 @@ interface CreateRoomForm {
 }
 
 const CreateRoom = () => {
+  const [loggedUser, setLoggedUser] = useState<User>(null);
   const [isCreatingRoom, setIsCreatingRoom] = useState<boolean>(false);
 
   const router = useRouter();
 
   useEffect(() => {
-    socket.on("user:created", (user) => {
-      if (user) {
-        console.log("user:created");
-        console.log(user);
-        localStorage.setItem("roomUser", JSON.stringify(user));
-        socket.emit("room:create", {
-          roomTopic: getValues("roomTopic").toUpperCase(),
-          userId: user.id,
-        });
-      }
-    });
-    socket.on("room:created", (room) => {
-      // Save room
-      console.log("room");
-      console.log(room);
-      setIsCreatingRoom(false);
-      router.push(`/room/${room.id}`);
-    });
-
-    return () => {
-      // Clean up of sockets
-      socket.off("user:created");
-      socket.off("room:created");
-    };
+    const userSaved: User = JSON.parse(localStorage.getItem("roomUser"));
+    setLoggedUser(userSaved);
+    resetForm({ userName: userSaved.userName });
   }, []);
 
   const {
@@ -52,10 +34,45 @@ const CreateRoom = () => {
     reset: resetForm,
   } = useForm<CreateRoomForm>();
 
-  const onCreateRoom = (data) => {
-    setIsCreatingRoom(true);
-    data = capitalizeInputs(data);
-    socket.emit("user:create", { userName: data.userName });
+  const onSubmit = async (data: CreateRoomForm) => {
+    try {
+      setIsCreatingRoom(true);
+      data = capitalizeInputs(data);
+      let newUserRes;
+      if (!loggedUser) {
+        newUserRes = await axios.post(
+          "http:// localhost:4000/api/auth/signup",
+          {
+            userName: data.userName,
+          }
+        );
+        localStorage.setItem("roomUser", JSON.stringify(newUserRes.data));
+      }
+
+      if (loggedUser) {
+        newUserRes = await axios.post("http://localhost:4000/api/auth/signin", {
+          id: loggedUser.id,
+          userName: data.userName,
+        });
+        localStorage.setItem("roomUser", JSON.stringify(newUserRes.data));
+      }
+
+      const newRoomRes = await axios.post(
+        "http://localhost:4000/api/room/createroom",
+        {
+          roomTopic: data.roomTopic,
+          moderatorId: newUserRes.data.id,
+        }
+      );
+      console.log("New room");
+      console.log(newRoomRes);
+
+      setIsCreatingRoom(false);
+      router.push(`/room/${newRoomRes.data.id}`);
+    } catch (e) {
+      setIsCreatingRoom(false);
+      console.log(e);
+    }
   };
 
   const capitalizeInputs = (dataToCapitalize) => {
@@ -68,7 +85,7 @@ const CreateRoom = () => {
   return (
     <Layout title="Create Room">
       <form
-        onSubmit={handleSubmit(onCreateRoom)}
+        onSubmit={handleSubmit(onSubmit)}
         className="fixed inset-0 flex h-screen flex-col items-center justify-start space-y-16 overflow-y-scroll py-20"
       >
         <PageTitleBiOutline className="flex-col text-8xl" outlineFirst>
