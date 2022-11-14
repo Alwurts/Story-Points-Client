@@ -27,7 +27,7 @@ const JoinRoom = () => {
     if (roomId && !roomIdIsValid) {
       const validateRoom = async (roomToValidate) => {
         const { data: roomReturned }: { data: Room } = await axios.post(
-          "http://localhost:4000/api/room/validateroom",
+          process.env.NEXT_PUBLIC_SERVER_URL + "/api/room/validateroom",
           {
             roomId: roomToValidate,
           }
@@ -41,7 +41,7 @@ const JoinRoom = () => {
 
         if (userSaved) {
           const { data: userInRoom }: { data: any } = await axios.post(
-            "http://localhost:4000/api/room/validateuserinroom",
+            process.env.NEXT_PUBLIC_SERVER_URL + "/api/room/validateuserinroom",
             {
               roomId: roomToValidate,
               userSavedId: userSaved.id,
@@ -77,7 +77,7 @@ const JoinRoom = () => {
 
       if (!loggedUser) {
         const newUserRes = await axios.post(
-          "http://localhost:4000/api/auth/signup",
+          process.env.NEXT_PUBLIC_SERVER_URL + "/api/auth/signup",
           {
             userName: data.userName,
           }
@@ -88,7 +88,7 @@ const JoinRoom = () => {
 
       if (loggedUser) {
         const newUserRes = await axios.post(
-          "http://localhost:4000/api/auth/signin",
+          process.env.NEXT_PUBLIC_SERVER_URL + "/api/auth/signin",
           {
             id: loggedUser.id,
             userName: data.userName,

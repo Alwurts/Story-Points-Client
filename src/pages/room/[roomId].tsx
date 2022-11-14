@@ -26,7 +26,7 @@ const RoomPage = () => {
     if (roomId) {
       const validateRoom = async (roomToValidate) => {
         const { data: roomReturned }: { data: Room } = await axios.post(
-          "http://localhost:4000/api/room/validateroom",
+          process.env.NEXT_PUBLIC_SERVER_URL + "/api/room/validateroom",
           {
             roomId: roomToValidate,
           }

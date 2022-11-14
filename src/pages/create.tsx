@@ -41,7 +41,7 @@ const CreateRoom = () => {
       let newUserRes;
       if (!loggedUser) {
         newUserRes = await axios.post(
-          "http:// localhost:4000/api/auth/signup",
+          process.env.NEXT_PUBLIC_SERVER_URL + "/api/auth/signup",
           {
             userName: data.userName,
           }
@@ -50,15 +50,18 @@ const CreateRoom = () => {
       }
 
       if (loggedUser) {
-        newUserRes = await axios.post("http://localhost:4000/api/auth/signin", {
-          id: loggedUser.id,
-          userName: data.userName,
-        });
+        newUserRes = await axios.post(
+          process.env.NEXT_PUBLIC_SERVER_URL + "/api/auth/signin",
+          {
+            id: loggedUser.id,
+            userName: data.userName,
+          }
+        );
         localStorage.setItem("roomUser", JSON.stringify(newUserRes.data));
       }
 
       const newRoomRes = await axios.post(
-        "http://localhost:4000/api/room/createroom",
+        process.env.NEXT_PUBLIC_SERVER_URL + "/api/room/createroom",
         {
           roomTopic: data.roomTopic,
           moderatorId: newUserRes.data.id,
