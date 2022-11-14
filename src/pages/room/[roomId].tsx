@@ -9,12 +9,14 @@ import WaitingRoom from "../../components/views/WaitingRoom";
 import { User } from "../../types/user";
 import { Room } from "../../types/room";
 import VotingRoom from "../../components/views/VotingRoom";
+import axios from "axios";
+import ResultRoom from "../../components/views/ResultRoom";
 
 const RoomPage = () => {
   const [loggedUser, setLoggedUser] = useState<User>(null);
   const [room, setRoom] = useState<Room>(null);
   const [showConnectionDialog, setShowConnectionDialog] =
-    useState<boolean>(false);
+    useState<boolean>(true);
   const [showSettingsDialog, setShowSettingsDialog] = useState<boolean>(false);
 
   const router = useRouter();
@@ -22,32 +24,54 @@ const RoomPage = () => {
 
   useEffect(() => {
     if (roomId) {
-      const userSaved: User = JSON.parse(localStorage.getItem("roomUser"));
-      console.log("userSaved");
-      console.log(userSaved);
-      if (!userSaved) {
-        router.push("/");
-        return;
-      }
-      setLoggedUser(userSaved);
-      socket.emit("room:join", {
-        roomId: roomId,
-        userId: userSaved.id, //get from local storage
-      });
+      const validateRoom = async (roomToValidate) => {
+        const { data: roomReturned }: { data: Room } = await axios.post(
+          "http://localhost:4000/api/room/validateroom",
+          {
+            roomId: roomToValidate,
+          }
+        );
+        if (!roomReturned || roomReturned.state === "inactive") {
+          router.push("/roomerror");
+          return;
+        }
+
+        const userSaved: User = JSON.parse(localStorage.getItem("roomUser"));
+        if (!userSaved) {
+          router.push(`/joinroom/${roomId}`);
+          return;
+        }
+
+        setLoggedUser(userSaved);
+        socket.emit("room:join", {
+          roomId: roomId,
+          userId: userSaved.id, //get from local storage
+        });
+      };
+      validateRoom(roomId);
     }
-  }, [router.query]);
+  }, [roomId]);
+
+  useEffect(() => {
+    if (room && room.moderator.id !== loggedUser.id) {
+      setShowConnectionDialog(false);
+    }
+  }, [room]);
 
   useEffect(() => {
     socket.connect();
 
-    socket.on("room:update", (room: Room) => {
-      console.log("room:update");
-      console.log(room);
-      setRoom(room);
+    socket.on("room:update", (receivedRoom: Room) => {
+      setRoom(receivedRoom);
+    });
+
+    socket.on("room:redirect", (redirectUrl) => {
+      router.push(redirectUrl);
     });
 
     return () => {
       socket.off("room:update");
+      socket.off("room:redirect");
     };
   }, []);
 
@@ -55,10 +79,13 @@ const RoomPage = () => {
     return null;
   }
 
+  const userIsVoting = room.votingSessionVotes[loggedUser.id] !== undefined;
+
   return (
     <Layout title="StoryMator">
       <ConnectionDialog
         showDialog={showConnectionDialog}
+        roomId={room.id}
         setShowDialog={setShowConnectionDialog}
       />
       <SettingsDialog
@@ -69,11 +96,14 @@ const RoomPage = () => {
         shareAction={() => setShowConnectionDialog(true)}
         settingsAction={() => setShowSettingsDialog(true)}
       />
-      {room.state === "waiting" && (
+      {(room.state === "waiting" || !userIsVoting) && (
         <WaitingRoom room={room} user={loggedUser} socket={socket} />
       )}
-      {room.state === "voting" && (
+      {room.state === "voting" && userIsVoting && (
         <VotingRoom socket={socket} room={room} user={loggedUser} />
+      )}
+      {room.state === "results" && userIsVoting && (
+        <ResultRoom socket={socket} room={room} user={loggedUser} />
       )}
     </Layout>
   );

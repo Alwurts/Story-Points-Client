@@ -3,9 +3,9 @@ import { User } from "./user";
 export interface Room {
   id: string;
   topic: string;
-  state: "waiting" | "voting";
+  state: "inactive" | "waiting" | "voting" | "results";
   moderator: User | null;
   activeUsers: User[];
-  votingSessionUsers: { [key: string]: User };
+  hasBeenActiveUser: { [key: string]: User };
   votingSessionVotes: { [key: string]: string };
 }

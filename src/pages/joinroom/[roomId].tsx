@@ -47,7 +47,7 @@ const JoinRoom = () => {
               userSavedId: userSaved.id,
             }
           );
-          if (userInRoom.currentlyActive || userInRoom.hasBeenActive) {
+          if (userInRoom.currentlyActive) {
             router.push(`/room/${roomId}`);
             return;
           }
