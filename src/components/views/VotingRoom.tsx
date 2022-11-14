@@ -5,7 +5,7 @@ import HorizontalSeparator from "../../components/general/HorizontalSeparator";
 import ColorButton from "../../components/buttons/ColorButton";
 import classNames from "../../utils/className";
 import { RoomView } from "../../types/views";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 
 const fibonnacciPoints = [
   "1",
@@ -22,11 +22,28 @@ const fibonnacciPoints = [
 
 const VotingRoom: React.FC<RoomView> = ({ room, user, socket }) => {
   if (!user || !room) return null;
+
   const isCreator = user?.id === room?.moderator.id;
+  const allUsersVoted =
+    -1 ===
+    Object.keys(room.votingSessionVotes).findIndex((votingUserId) => {
+      const votingUserIsActive =
+        -1 !==
+        room.activeUsers.findIndex(
+          (activeUser) => activeUser.id === votingUserId
+        );
+      if (votingUserIsActive) {
+        return room.votingSessionVotes[votingUserId] === null;
+      }
+    });
 
   const [userSelection, setUserSelection] = useState<string>(
     room.votingSessionVotes[user.id]
   );
+
+  useEffect(() => {
+    setUserSelection(room.votingSessionVotes[user.id]);
+  }, [room.votingSessionVotes[user.id]]);
 
   return (
     <div className="fixed inset-0 flex h-screen flex-col items-center justify-start overflow-y-scroll">
@@ -39,18 +56,37 @@ const VotingRoom: React.FC<RoomView> = ({ room, user, socket }) => {
         </PageTitleBiOutline>
         <UsersLoggedSmall users={room.activeUsers} />
       </div>
+      <p className="mt-10 text-center text-4xl font-black uppercase text-green-500">
+        {allUsersVoted
+          ? "All users voted"
+          : userSelection
+          ? "Waiting for other users selection..."
+          : "Waiting for your selection"}
+      </p>
+      {isCreator && (
+        <ColorButton
+          onClick={() => {
+            socket.emit("room:finishvoting", {
+              roomId: room.id,
+            });
+          }}
+          disabled={!allUsersVoted}
+          className="mt-7 bg-green-500 text-3xl"
+        >
+          Show results
+        </ColorButton>
+      )}
       <HorizontalSeparator className="my-8 px-5" />
       <span className="text-outline-sm mx-2 text-center text-5xl text-white">
         {userSelection
           ? `Your selection: ${userSelection}`
-          : "Nothing selected"}
+          : "Nothing selected, please make a selection"}
       </span>
       <div className="mt-14 flex w-full flex-wrap justify-center gap-x-4 gap-y-4 px-4 pb-32 sm:w-11/12 sm:px-10">
         {fibonnacciPoints.map((point, index) => (
           <ColorButton
             key={`${index}-${point}`}
             onClick={() => {
-              console.log(point);
               const newSelection = userSelection === point ? null : point;
               setUserSelection(newSelection);
               socket.emit("room:vote", {
