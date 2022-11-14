@@ -1,5 +1,4 @@
 import { useState } from "react";
-import useAutosizeTextArea from "../hooks/useAutoSizeTextArea";
 import { CheckIcon, LinkIcon } from "../icons";
 import { Transition } from "@headlessui/react";
 
