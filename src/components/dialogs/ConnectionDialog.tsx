@@ -40,7 +40,7 @@ const ConnectionDialog: React.FC<PropTypes> = ({
         <div className="mt-3 flex w-full flex-col items-center justify-center text-xl sm:text-2xl">
           <p className="font-bold">Invite link: </p>
           <ConnectionLink
-            connectionLink={`http://${process.env.NEXT_PUBLIC_VERCEL_URL}/joinroom/${roomId}`}
+            connectionLink={`${process.env.NEXT_PUBLIC_VERCEL_URL}/joinroom/${roomId}`}
           />
         </div>
       </Dialog.Panel>

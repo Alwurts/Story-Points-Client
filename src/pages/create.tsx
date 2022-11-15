@@ -23,7 +23,7 @@ const CreateRoom = () => {
   useEffect(() => {
     const userSaved: User = JSON.parse(localStorage.getItem("roomUser"));
     setLoggedUser(userSaved);
-    resetForm({ userName: userSaved.userName });
+    resetForm({ userName: userSaved?.userName });
   }, []);
 
   const {
