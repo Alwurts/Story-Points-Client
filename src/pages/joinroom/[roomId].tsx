@@ -9,6 +9,7 @@ import { useRouter } from "next/router";
 import axios from "axios";
 import { User } from "../../types/user";
 import { Room } from "../../types/room";
+import { notifySameRoute } from "../../utils/banner";
 
 interface JoinRoomForm {
   userName: string;
@@ -16,7 +17,7 @@ interface JoinRoomForm {
 
 const JoinRoom = () => {
   const [isJoiningRoom, setIsJoiningRoom] = useState<boolean>(false);
-  const [roomIdIsValid, setRoomIdIsValid] = useState<boolean>(false);
+  const [roomToJoin, setRoomToJoin] = useState<Room>();
   const [loggedUser, setLoggedUser] = useState<User>(null);
 
   const router = useRouter();
@@ -24,7 +25,7 @@ const JoinRoom = () => {
   const { roomId } = router.query;
 
   useEffect(() => {
-    if (roomId && !roomIdIsValid) {
+    if (roomId && !roomToJoin) {
       const validateRoom = async (roomToValidate) => {
         const { data: roomReturned }: { data: Room } = await axios.post(
           process.env.NEXT_PUBLIC_SERVER_URL + "/api/room/validateroom",
@@ -36,6 +37,7 @@ const JoinRoom = () => {
           router.push("/roomerror");
           return;
         }
+        setRoomToJoin(roomReturned);
 
         const userSaved: User = JSON.parse(localStorage.getItem("roomUser"));
 
@@ -54,7 +56,6 @@ const JoinRoom = () => {
           setLoggedUser(userSaved);
           resetForm({ userName: userSaved.userName });
         }
-        setRoomIdIsValid(true);
       };
       validateRoom(roomId);
     }
@@ -63,7 +64,6 @@ const JoinRoom = () => {
   const {
     register: registerForm,
     handleSubmit,
-    getValues,
     formState: { errors, isDirty, dirtyFields },
     reset: resetForm,
   } = useForm<JoinRoomForm>();
@@ -101,6 +101,10 @@ const JoinRoom = () => {
       setIsJoiningRoom(false);
     } catch (e) {
       setIsJoiningRoom(false);
+      notifySameRoute(router, {
+        messageType: "error",
+        message: "Unknown error",
+      });
       console.log(e);
     }
   };
@@ -112,7 +116,7 @@ const JoinRoom = () => {
     return dataToCapitalize;
   };
 
-  if (!roomIdIsValid) return null;
+  if (!roomToJoin) return null;
 
   return (
     <Layout title="Join Room">
@@ -121,7 +125,7 @@ const JoinRoom = () => {
         className="fixed inset-0 flex h-screen flex-col items-center justify-start space-y-16 overflow-y-scroll py-20"
       >
         <PageTitleBiOutline className="flex-col text-8xl" outlineFirst>
-          {`JOIN ROOM@@ ${roomId}`}
+          {`JOIN ROOM@@ ${roomToJoin.topic}`}
         </PageTitleBiOutline>
         <div className="flex w-full flex-col items-start justify-center space-y-8 px-5 lg:w-8/12 xl:w-7/12">
           <TextInput

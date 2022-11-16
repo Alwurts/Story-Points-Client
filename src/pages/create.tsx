@@ -8,6 +8,9 @@ import socket from "../utils/socket";
 import { useRouter } from "next/router";
 import axios from "axios";
 import { User } from "../types/user";
+import ConnectionDialog from "../components/dialogs/ConnectionDialog";
+import ErrorDialog from "../components/dialogs/ErrorBanner";
+import { notifySameRoute } from "../utils/banner";
 
 interface CreateRoomForm {
   roomTopic: string;
@@ -17,19 +20,22 @@ interface CreateRoomForm {
 const CreateRoom = () => {
   const [loggedUser, setLoggedUser] = useState<User>(null);
   const [isCreatingRoom, setIsCreatingRoom] = useState<boolean>(false);
+  const [showConnectionDialog, setShowConnectionDialog] =
+    useState<boolean>(true);
 
   const router = useRouter();
 
   useEffect(() => {
     const userSaved: User = JSON.parse(localStorage.getItem("roomUser"));
-    setLoggedUser(userSaved);
-    resetForm({ userName: userSaved?.userName });
+    if (userSaved) {
+      setLoggedUser(userSaved);
+      resetForm({ userName: userSaved?.userName });
+    }
   }, []);
 
   const {
     register: registerForm,
     handleSubmit,
-    getValues,
     formState: { errors, isDirty, dirtyFields },
     reset: resetForm,
   } = useForm<CreateRoomForm>();
@@ -67,13 +73,15 @@ const CreateRoom = () => {
           moderatorId: newUserRes.data.id,
         }
       );
-      console.log("New room");
-      console.log(newRoomRes);
 
       setIsCreatingRoom(false);
       router.push(`/room/${newRoomRes.data.id}`);
     } catch (e) {
       setIsCreatingRoom(false);
+      notifySameRoute(router, {
+        messageType: "error",
+        message: "Unknown error",
+      });
       console.log(e);
     }
   };
