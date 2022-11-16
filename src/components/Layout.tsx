@@ -17,6 +17,7 @@ const Layout = ({ children, title = "This is the default title" }: Props) => (
         name="viewport"
         content="initial-scale=1.0, width=device-width , maximum-scale=1.0, user-scalable=no"
       />
+      <link rel="shortcut icon" href="/favicon.ico" />
       <meta name="HandheldFriendly" content="true" />
     </Head>
     <ErrorBanner />
