@@ -45,6 +45,10 @@ const VotingRoom: React.FC<RoomView> = ({ room, user, socket }) => {
     setUserSelection(room.votingSessionVotes[user.id]);
   }, [room.votingSessionVotes[user.id]]);
 
+  const votingUsers = room.activeUsers.filter((activeUser) => {
+    return room.votingSessionVotes[activeUser.id] !== undefined;
+  });
+
   return (
     <div className="fixed inset-0 flex h-screen flex-col items-center justify-start overflow-y-scroll">
       <div className="flex w-full flex-col items-center justify-evenly px-2 pt-8 sm:flex-row">
@@ -54,7 +58,7 @@ const VotingRoom: React.FC<RoomView> = ({ room, user, socket }) => {
         >
           {room.topic.split(" ").join("@@")}
         </PageTitleBiOutline>
-        <UsersLoggedSmall users={room.activeUsers} />
+        <UsersLoggedSmall users={votingUsers} />
       </div>
       <p className="mt-10 text-center text-4xl font-black uppercase text-green-500">
         {allUsersVoted
