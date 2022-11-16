@@ -1,6 +1,7 @@
 import React, { ReactNode } from "react";
 import Link from "next/link";
 import Head from "next/head";
+import ErrorBanner from "./dialogs/ErrorBanner";
 
 type Props = {
   children?: ReactNode;
@@ -18,6 +19,7 @@ const Layout = ({ children, title = "This is the default title" }: Props) => (
       />
       <meta name="HandheldFriendly" content="true" />
     </Head>
+    <ErrorBanner />
     {children}
   </div>
 );
