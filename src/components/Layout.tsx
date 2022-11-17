@@ -2,6 +2,9 @@ import React, { ReactNode } from "react";
 import Link from "next/link";
 import Head from "next/head";
 import ErrorBanner from "./dialogs/ErrorBanner";
+import Script from "next/script";
+
+const GA_MEASUREMENT_ID = process.env.NEXT_PUBLIC_MEASUREMENT_ID;
 
 type Props = {
   children?: ReactNode;
@@ -44,6 +47,18 @@ const Layout = ({ children, title = "This is the default title" }: Props) => (
       <meta name="msapplication-TileColor" content="#da532c" />
       <meta name="theme-color" content="#ffffff" />
     </Head>
+    <Script
+      src={`https://www.googletagmanager.com/gtag/js?id=${GA_MEASUREMENT_ID}`}
+      strategy="afterInteractive"
+    />
+    <Script id="google-analytics" strategy="afterInteractive">
+      {`
+    window.dataLayer = window.dataLayer || [];
+    function gtag(){window.dataLayer.push(arguments);}
+    gtag('js', new Date());
+    gtag('config', '${GA_MEASUREMENT_ID}');
+  `}
+    </Script>
     <ErrorBanner />
     {children}
   </div>
