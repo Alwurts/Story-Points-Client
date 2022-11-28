@@ -25,7 +25,7 @@ const Loader: FC<LoaderProps> = ({ config }) => {
           role="status"
         >
           <p className="-mt-1 animate-pulse text-base font-semibold text-green-600 md:text-3xl">
-            {message ? message : "Cargando..."}
+            {message ? message : "Loading..."}
           </p>
         </div>
       </div>
