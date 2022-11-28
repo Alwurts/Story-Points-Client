@@ -3,15 +3,21 @@ import Link from "next/link";
 import Head from "next/head";
 import ErrorBanner from "./dialogs/ErrorBanner";
 import Script from "next/script";
+import Loader from "./Loader";
 
 const GA_MEASUREMENT_ID = process.env.NEXT_PUBLIC_MEASUREMENT_ID;
 
 type Props = {
   children?: ReactNode;
   title?: string;
+  showLoader?: boolean;
 };
 
-const Layout = ({ children, title = "This is the default title" }: Props) => (
+const Layout = ({
+  children,
+  title = "This is the default title",
+  showLoader,
+}: Props) => (
   <div>
     <Head>
       <title>{title}</title>
@@ -60,6 +66,7 @@ const Layout = ({ children, title = "This is the default title" }: Props) => (
   `}
     </Script>
     <ErrorBanner />
+    <Loader config={{ show: showLoader }} />
     {children}
   </div>
 );

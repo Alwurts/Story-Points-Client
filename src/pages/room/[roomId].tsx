@@ -15,6 +15,7 @@ import { notifySameRoute } from "../../utils/banner";
 
 const RoomPage = () => {
   const [loggedUser, setLoggedUser] = useState<User>(null);
+  const [showLoader, setShowLoader] = useState<boolean>(true);
   const [room, setRoom] = useState<Room>(null);
   const [showConnectionDialog, setShowConnectionDialog] =
     useState<boolean>(true);
@@ -27,17 +28,6 @@ const RoomPage = () => {
     if (roomId) {
       const validateRoom = async (roomToValidate) => {
         try {
-          /* const { data: roomReturned }: { data: Room } = await axios.post(
-            process.env.NEXT_PUBLIC_SERVER_URL + "/api/room/validateroom",
-            {
-              roomId: roomToValidate,
-            }
-          );
-          if (!roomReturned || roomReturned.state === "inactive") {
-            router.push(`/roomerror?errorMessage=doesn't exist`);
-            return;
-          } */
-
           const userSaved: User = JSON.parse(localStorage.getItem("roomUser"));
           if (!userSaved) {
             router.push(`/joinroom/${roomId}`);
@@ -71,6 +61,7 @@ const RoomPage = () => {
 
     socket.on("room:update", (receivedRoom: Room) => {
       setRoom(receivedRoom);
+      setShowLoader(false);
     });
 
     socket.on("room:redirect", (redirectUrl) => {
@@ -78,6 +69,7 @@ const RoomPage = () => {
     });
 
     socket.on("error", (error) => {
+      setShowLoader(false);
       notifySameRoute(router, {
         messageType: "error",
         message: "Unknown error",
@@ -85,6 +77,7 @@ const RoomPage = () => {
     });
 
     socket.on("reconnect_error", (error) => {
+      setShowLoader(false);
       notifySameRoute(router, {
         messageType: "error",
         message: "Unknown error",
@@ -92,6 +85,7 @@ const RoomPage = () => {
     });
 
     socket.on("reconnect_failed", (error) => {
+      setShowLoader(false);
       notifySameRoute(router, {
         messageType: "error",
         message: "Unknown error",
@@ -110,8 +104,8 @@ const RoomPage = () => {
   const userIsVoting = room?.votingSessionVotes[loggedUser.id] !== undefined;
 
   return (
-    <Layout title="StoryMator">
-      {loggedUser && room && (
+    <Layout title="StoryMator" showLoader={showLoader}>
+      {loggedUser && room && !showLoader && (
         <Fragment>
           <ConnectionDialog
             showDialog={showConnectionDialog}

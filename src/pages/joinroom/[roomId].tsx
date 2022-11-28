@@ -17,6 +17,7 @@ interface JoinRoomForm {
 
 const JoinRoom = () => {
   const [isJoiningRoom, setIsJoiningRoom] = useState<boolean>(false);
+  const [showLoader, setShowLoader] = useState<boolean>(true);
   const [roomToJoin, setRoomToJoin] = useState<Room>();
   const [loggedUser, setLoggedUser] = useState<User>(null);
 
@@ -56,6 +57,7 @@ const JoinRoom = () => {
           setLoggedUser(userSaved);
           resetForm({ userName: userSaved.userName });
         }
+        setShowLoader(false);
       };
       validateRoom(roomId);
     }
@@ -119,28 +121,30 @@ const JoinRoom = () => {
   if (!roomToJoin) return null;
 
   return (
-    <Layout title="Join Room">
-      <form
-        onSubmit={handleSubmit(onSubmit)}
-        className="fixed inset-0 flex h-screen flex-col items-center justify-start space-y-16 overflow-y-scroll py-20"
-      >
-        <PageTitleBiOutline className="flex-col text-8xl" outlineFirst>
-          {`JOIN ROOM@@ ${roomToJoin.topic}`}
-        </PageTitleBiOutline>
-        <div className="flex w-full flex-col items-start justify-center space-y-8 px-5 lg:w-8/12 xl:w-7/12">
-          <TextInput
-            id="userName"
-            title="Your Name"
-            required
-            disabled={isJoiningRoom}
-            error={errors["userName"]}
-            registerInput={registerForm}
-          />
-        </div>
-        <ColorButton actionIsLoading={isJoiningRoom} className="bg-green-500">
-          Join
-        </ColorButton>
-      </form>
+    <Layout title="Join Room" showLoader={showLoader}>
+      {!showLoader && (
+        <form
+          onSubmit={handleSubmit(onSubmit)}
+          className="fixed inset-0 flex h-screen flex-col items-center justify-start space-y-16 overflow-y-scroll py-20"
+        >
+          <PageTitleBiOutline className="flex-col text-8xl" outlineFirst>
+            {`JOIN ROOM@@ ${roomToJoin.topic}`}
+          </PageTitleBiOutline>
+          <div className="flex w-full flex-col items-start justify-center space-y-8 px-5 lg:w-8/12 xl:w-7/12">
+            <TextInput
+              id="userName"
+              title="Your Name"
+              required
+              disabled={isJoiningRoom}
+              error={errors["userName"]}
+              registerInput={registerForm}
+            />
+          </div>
+          <ColorButton actionIsLoading={isJoiningRoom} className="bg-green-500">
+            Join
+          </ColorButton>
+        </form>
+      )}
     </Layout>
   );
 };
