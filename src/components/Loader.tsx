@@ -24,7 +24,7 @@ const Loader: FC<LoaderProps> = ({ config }) => {
           className="flex flex-col items-center justify-center"
           role="status"
         >
-          <p className="-mt-1 animate-pulse text-base font-semibold text-green-600 md:text-3xl">
+          <p className="text-outline -mt-1 animate-pulse text-6xl text-white  md:text-5xl">
             {message ? message : "Loading..."}
           </p>
         </div>
