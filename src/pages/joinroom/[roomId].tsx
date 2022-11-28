@@ -118,11 +118,9 @@ const JoinRoom = () => {
     return dataToCapitalize;
   };
 
-  if (!roomToJoin) return null;
-
   return (
-    <Layout title="Join Room" showLoader={showLoader}>
-      {!showLoader && (
+    <Layout title="Join Room" showLoader={showLoader || !roomToJoin}>
+      {!showLoader && roomToJoin && (
         <form
           onSubmit={handleSubmit(onSubmit)}
           className="fixed inset-0 flex h-screen flex-col items-center justify-start space-y-16 overflow-y-scroll py-20"
