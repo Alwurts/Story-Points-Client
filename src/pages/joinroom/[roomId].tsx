@@ -35,7 +35,7 @@ const JoinRoom = () => {
           }
         );
         if (!roomReturned) {
-          router.push("/roomerror");
+          router.push("/roomerror?errorMessage=does not exist");
           return;
         }
         setRoomToJoin(roomReturned);
