@@ -57,6 +57,7 @@ const Layout = ({
       src={`https://www.googletagmanager.com/gtag/js?id=${GA_MEASUREMENT_ID}`}
       strategy="afterInteractive"
     />
+    <Script src="https://umami.alwurts.com/script.js" data-website-id="6d05ef66-ba08-493a-9192-75f0c0c6eced" strategy="afterInteractive"/>
     <Script id="google-analytics" strategy="afterInteractive">
       {`
     window.dataLayer = window.dataLayer || [];
